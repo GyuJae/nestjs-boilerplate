@@ -20,4 +20,10 @@ model User {
   username  String   @unique
   password  String
   avatar    String?
+  role      Role     @default(USER)
+}
+
+enum Role {
+  USER
+  ADMIN
 }

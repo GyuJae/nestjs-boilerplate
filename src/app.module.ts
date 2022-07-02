@@ -5,6 +5,8 @@ import { UsersModule } from './users/users.module';
 import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
 import { PrismaModule } from './prisma/prisma.module';
 import { CoreModule } from './core/core.module';
+import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -19,6 +21,10 @@ import { CoreModule } from './core/core.module';
     UsersModule,
     PrismaModule,
     CoreModule,
+    AuthModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
   ],
   controllers: [],
   providers: [],
