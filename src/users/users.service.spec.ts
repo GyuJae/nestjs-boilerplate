@@ -58,4 +58,35 @@ describe('UserService', () => {
       });
     });
   });
+
+  describe('login()', () => {
+    it('should login success', async () => {
+      const result = await service.login({
+        email: 'test@test.com',
+        password: '1',
+      });
+
+      expect(result.ok).toBe(true);
+    });
+
+    it('Not Found User', async () => {
+      const result = await service.login({
+        email: 'notFoundEmail@notFoundEmail.com',
+        password: '1',
+      });
+
+      expect(result.ok).toBe(false);
+      expect(result.error).toBe('❌ Not Found User by this email.');
+    });
+
+    it('Wrong User', async () => {
+      const result = await service.login({
+        email: 'test@test.com',
+        password: 'wrong password',
+      });
+
+      expect(result.ok).toBe(false);
+      expect(result.error).toBe('❌ Wrong Password.');
+    });
+  });
 });
