@@ -7,6 +7,8 @@ import {
 import * as bcrypt from 'bcrypt';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
 import { AuthService } from 'src/auth/auth.service';
+import { EditProfileInput, EditProfileOutput } from './dtos/editProfile.dto';
+import { UserEntity } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
@@ -76,6 +78,37 @@ export class UsersService {
       return {
         ok: true,
         token,
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        error: error.message,
+      };
+    }
+  }
+
+  async editProfile(
+    editProfileInput: EditProfileInput,
+    { id }: UserEntity,
+  ): Promise<EditProfileOutput> {
+    try {
+      const currentUser = await this.prismaService.user.findUnique({
+        where: { id },
+        select: {
+          id: true,
+        },
+      });
+      if (!currentUser) throw new Error('❌ User Not Found.');
+      await this.prismaService.user.update({
+        where: {
+          id: currentUser.id,
+        },
+        data: {
+          ...editProfileInput,
+        },
+      });
+      return {
+        ok: true,
       };
     } catch (error) {
       return {

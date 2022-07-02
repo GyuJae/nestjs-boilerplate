@@ -23,10 +23,10 @@ export class AuthService {
 
   async verify(token: string): Promise<UserEntity | null> {
     try {
-      const { id } = await this.jwtService.verify(token);
-
+      const { id } = await this.jwtService.verify(token, {
+        secret: this.configService.get('JWT_PRIVATE_KEY'),
+      });
       if (!id) throw new Error('❌ Verify Error not found id');
-
       const user = await this.prismaService.user.findUnique({
         where: {
           id,
@@ -36,7 +36,8 @@ export class AuthService {
       if (!user) throw new Error('❌ Not Found User');
 
       return user;
-    } catch {
+    } catch (error) {
+      console.log(error);
       return null;
     }
   }
