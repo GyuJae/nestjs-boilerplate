@@ -5,6 +5,7 @@ import {
   CreateAccountOutput,
 } from './dtos/createAccount.dto';
 import * as bcrypt from 'bcrypt';
+import { LoginInput, LoginOutput } from './dtos/login.dto';
 
 @Injectable()
 export class UsersService {
@@ -47,6 +48,28 @@ export class UsersService {
       });
       return {
         ok: true,
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        error: error.message,
+      };
+    }
+  }
+
+  async login({ email, password }: LoginInput): Promise<LoginOutput> {
+    try {
+      const user = await this.prismaService.user.findUnique({
+        where: { email },
+        select: { password: true },
+      });
+      if (!user) throw new Error('❌ Not Found User by this email.');
+
+      const comparePassword = await bcrypt.compare(password, user.password);
+      if (!comparePassword) throw new Error('❌ Wrong Password.');
+      return {
+        ok: true,
+        token: '',
       };
     } catch (error) {
       return {
