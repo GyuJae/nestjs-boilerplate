@@ -24,38 +24,27 @@ export class UsersService {
           id: true,
         },
       });
-
-      if (emailExist) {
-        return {
-          ok: false,
-          error: '❌ This Email already exist.',
-        };
-      }
+      if (emailExist) throw new Error('❌ This Email already exist.');
 
       const usernameExist = await this.prismaService.user.findUnique({
         where: {
           username,
         },
         select: {
-          id: true
-        }
+          id: true,
+        },
       });
 
-      if (usernameExist) {
-        return {
-          ok: false,
-          error: "❌ This Username already exist."
-        }
-      }
+      if (usernameExist) throw new Error('❌ This Username already exist.');
 
       const hashPassword = await bcrypt.hash(password, 10);
       await this.prismaService.user.create({
         data: {
           email,
           username,
-          password: hashPassword
-        }
-      })
+          password: hashPassword,
+        },
+      });
       return {
         ok: true,
       };
