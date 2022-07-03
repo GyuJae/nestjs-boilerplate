@@ -36,8 +36,7 @@ export class AuthService {
       if (!user) throw new Error('❌ Not Found User');
 
       return user;
-    } catch (error) {
-      console.log(error);
+    } catch {
       return null;
     }
   }

@@ -25,6 +25,12 @@ describe('UserService', () => {
     await prisma.user.deleteMany({});
   });
 
+  const userInfo = {
+    email: 'test@test.com',
+    password: '1',
+    username: 'test',
+  };
+
   it('should be defined', () => {
     expect(service).toBeDefined();
     expect(prisma).toBeDefined();
@@ -32,24 +38,16 @@ describe('UserService', () => {
 
   describe('createAccount()', () => {
     it('should create user', async () => {
-      const result = await service.createAccount({
-        email: 'test@test.com',
-        password: '1',
-        username: 'test',
-      });
-      expect(result).toEqual({
-        ok: true,
-        error: undefined,
-      });
+      const result = await service.createAccount(userInfo);
+      expect(result.ok).toBe(true);
     });
 
     it('already email', async () => {
       const result = await service.createAccount({
-        email: 'test@test.com',
-        password: '1',
+        ...userInfo,
         username: 'newUsername',
       });
-      expect(result).toEqual({
+      expect(result).toMatchObject({
         ok: false,
         error: '❌ This Email already exist.',
       });
@@ -57,9 +55,8 @@ describe('UserService', () => {
 
     it('already username', async () => {
       const result = await service.createAccount({
+        ...userInfo,
         email: 'newEmail@newEmail.com',
-        password: '1',
-        username: 'test',
       });
       expect(result).toEqual({
         ok: false,
@@ -96,6 +93,22 @@ describe('UserService', () => {
 
       expect(result.ok).toBe(false);
       expect(result.error).toBe('❌ Wrong Password.');
+    });
+  });
+
+  describe('editProfile()', () => {
+    it('User Not Found', async () => {
+      const result = await service.editProfile({ avatar: 'newAvatar' }, 999);
+      expect(result).toEqual({
+        ok: false,
+        error: '❌ User Not Found.',
+      });
+    });
+
+    it('Edit User', async () => {
+      const { id } = await prisma.user.findFirst({ select: { id: true } });
+      const result = await service.editProfile({ avatar: 'newAvatar' }, id);
+      expect(result.ok).toBe(true);
     });
   });
 });

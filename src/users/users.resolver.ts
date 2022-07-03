@@ -36,6 +36,6 @@ export class UsersResolver {
     @Args('input') editProfilInput: EditProfileInput,
     @CurrentUser() currentUser: UserEntity,
   ): Promise<EditProfileOutput> {
-    return this.userService.editProfile(editProfilInput, currentUser);
+    return this.userService.editProfile(editProfilInput, currentUser.id);
   }
 }

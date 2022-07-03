@@ -8,7 +8,6 @@ import * as bcrypt from 'bcrypt';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
 import { AuthService } from 'src/auth/auth.service';
 import { EditProfileInput, EditProfileOutput } from './dtos/editProfile.dto';
-import { UserEntity } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
@@ -89,11 +88,11 @@ export class UsersService {
 
   async editProfile(
     editProfileInput: EditProfileInput,
-    { id }: UserEntity,
+    userId: number,
   ): Promise<EditProfileOutput> {
     try {
       const currentUser = await this.prismaService.user.findUnique({
-        where: { id },
+        where: { id: userId },
         select: {
           id: true,
         },
